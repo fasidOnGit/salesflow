@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/BlackrockDigital/startbootstrap-sb-admin-2.git"
+    "url": "https://github.com/fasidOnGit/salesflow.git"
   },
   "dependencies": {
     "body-parser": "^1.18.2",
@@ -27,10 +27,9 @@
     "dateformat": "^3.0.3",
     "ejs": "^2.5.9",
     "express": "^4.16.3",
-    "express-partials": "^0.3.0",
+    
     "i": "^0.3.6",
     "jquery": "^3.3.1",
-    "mysql": "^2.15.0",
-    "tether": "^1.4.4"
+    "mysql": "^2.15.0"
   }
 }
