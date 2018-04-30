@@ -270,7 +270,7 @@
                             <!-- /input-group -->
                         </li>
                         <li>
-                            <a href="index.html"><i class="fa fa-th-list fa-fw"></i>Dashboard</a>
+                            <a href="index.html"><i class="fa fa-dashboard fa-fw"></i>Dashboard</a>
                         </li>
                         <li>
                             <a href="enquiry.html"><i class="fa fa-th-list fa-fw"></i>Enquiry Log</a>
@@ -304,17 +304,14 @@
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
-                            <form id="ajax-enquiry-form" method="post"   action="" onclick="">
+                            <form action="/enquiry_data" method="post">
                                 <div id="note"></div>
 
                                 <div class="row">
-                                    <div class="col-xs-1 col-sm-1 form-group">
-                                        <label>Job Ref#</label>
-                                        <input name="job_ref" class="form-control">
-                                    </div>
+                                    
                                     <div class="col-xs-1 col-sm-1 form-group">
                                         <label>Recieved Date</label>
-                                        <input name="date" class="form-control" id="date">
+                                        <input name="reci_date" class="form-control" id="date">
                                     </div>
                                     <div class="col-xs-5 col-sm-5 form-group">
                                         <label>Project Name</label>
@@ -322,7 +319,7 @@
                                     </div>
                                     <div class="col-xs-2 col-sm-2 form-group">
                                         <label>Sales Engineer</label>
-                                        <select name="sales_person" class="form-control">
+                                        <select name="sales_per" class="form-control">
                                             <option>Azeem</option>
                                             <option>Suresh M</option>
                                         </select>
@@ -338,7 +335,7 @@
                                 <div class="row">
                                     <div class="col-xs-2 col-sm-2 form-group">
                                         <label>Contact Person</label>
-                                        <select name="contact_person" class="form-control">
+                                        <select name="contact_per" class="form-control">
                                             <option>Azeem</option>
                                             <option>Suresh M</option>
                                         </select>
@@ -423,6 +420,8 @@
     </div>
     <!-- /#wrapper -->
     <!-- jQuery -->
+    <script src="/app.js"></script>
+    <script src="/server.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script src="../vendor/jquery/jquery.min.js"></script>

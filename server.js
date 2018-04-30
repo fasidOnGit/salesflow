@@ -1,8 +1,8 @@
-const express = require('express');
-const app = express();
-const path = require('path');
-const bodyParser = require('body-parser');
-var mysql = require('mysql');
+var app = require('express')();
+var app = express();
+var path = require('path');
+var bodyParser = require('body-parser');
+
 
 
 app.use(bodyParser.urlencoded({extended : true}));
@@ -39,18 +39,6 @@ app.get('/index', function(req, res) {
   res.sendFile(path.join(__dirname + '/index.html'));
 });
 
-
-var Connection = mysql.createConnection({
-    host:'localhost',
-    user:'salesflow-admin',
-    password:'LSFAdmin-101',
-    database:'salesflow'
-});
-Connection.connect()   
-
-app.post('postEnquiry',function(req,res){
-    
-})
 
    
 
