@@ -149,10 +149,10 @@ const con = mysql.createConnection({
 });
 
 const siteTitle = "SalesFlow | Luftek";
-const baseURL = "http://sales.luftek.in"
+const baseURL = "http://localhost:4000"
 
 app.get('/', function (req,res) {
-  con.query("SELECT * FROM enquiries ORDER BY e_start_date DESC", function (err, result){
+  con.query("SELECT * FROM enquiries ORDER BY job_ref DESC", function (err, result){
     res.render('pages/index',{
       siteTitle : siteTitle,
       pageTitle : "Enquiry List",
