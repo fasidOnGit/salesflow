@@ -28,8 +28,8 @@
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body">
-                        <%if (items.length > 0) { %>
-                        <table width="100%" class="table table-striped table-bordered table-hover" id="enquiry_table">
+                        
+                        <table width="100%" class="table table-bordered table-hover" id="enquiry_table">
                             <thead>
                                 <tr>
                                         
@@ -45,7 +45,9 @@
                                     <th colspan="2">Actions</th>
                                 </tr>
                             </thead>
+                            
                             <tbody class="table-bordered">
+                                    <%if (items.length > 0) { %>
                                 <% items.forEach(function(item, index){ %>
                                     <tr>
                                            
@@ -58,16 +60,18 @@
                                         <td><%= item.amount %></td>
                                         <td><%= item.sales_per %></td>
                                         <td><%= item.status %></td>
-                                        <td colspan="2">
-                                            <a href="/editenquiry/<%= item.job_ref %>" class="btn btn-warning">Edit</a>
-                                            <a href="/viewenquiry/<%= item.job_ref %>" class="btn btn-info">View</a>
+                                        <td colspan="2" class="align-center">
+                                            <a href="/editenquiry/<%= item.job_ref %>" class="btn btn-warning btn-xs">Edit</a>
+                                            <a href="/viewenquiry/<%= item.job_ref %>" class="btn btn-info btn-xs">View</a>
                                         </td>
                                     </tr>
                                     <% }); %>
+                                    <%}%>
                             </tbody>
+                            
                         </table>
                         
-                            <%}%>
+                            
                         <!-- /.table-responsive -->
 
                     </div>
