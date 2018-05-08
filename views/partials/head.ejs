@@ -41,6 +41,17 @@
     <script src="/vendor/datatables/js/jquery.dataTables.min.js" type="text/JavaScript"  ></script>
     <script src="/vendor/datatables-plugins/dataTables.bootstrap.min.js" type="text/JavaScript"  ></script>
     <script src="/vendor/datatables-responsive/dataTables.responsive.js" type="text/JavaScript"  ></script>
+    <script  type="text/JavaScript" >
+        $(document).ready(function () {
+            var table = $('#enquiry_table').DataTable({
+                
+                responsive: true,
+                "order": [[ 0, "desc" ]]
+                
+            });
+            
+        });
+    </script>
     <!-- Custom Theme JavaScript -->
     <script src="/js/sb-admin-2.js" type="text/html"  ></script>
     <!-- Page-Level Demo Scripts - Tables - Use for reference -->

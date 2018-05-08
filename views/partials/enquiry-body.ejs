@@ -36,37 +36,36 @@
                                     <th>Job Ref</th>
                                     <th>Date</th>
                                     <th>Project</th>
+                                    <th class="hidden">Project Location</th>
                                     <th>Customer</th>
                                     <th>Product</th>
                                     <th>Qty</th>
                                     <th>Amount</th>
                                     <th>Sales Person</th>
                                     <th>Status</th>
-                                    <th colspan="2">Actions</th>
+                                    <th >Actions</th>
                                 </tr>
                             </thead>
                             
                             <tbody class="table-bordered">
-                                    
-                                <% items.forEach(function(item){ %>
-                                    <tr>
-                                           
-                                        <td><%= item.job_ref %></td>
-                                        <td><%= moment(item.reci_date).format('DD-MM-YYYY'); %></td>
-                                        <td><%= item.project %></td>
-                                        <td><%= item.customer %></td>
-                                        <td><%= item.product %></td>
-                                        <td><%= item.qty %></td>
-                                        <td><%= item.amount %></td>
-                                        <td><%= item.sales_per %></td>
-                                        <td><%= item.status %></td>
-                                        <td colspan="2" class="align-center">
-                                            <a href="/editenquiry/<%= item.job_ref %>" class="btn btn-warning btn-xs">Edit</a>
-                                            <a href="/viewenquiry/<%= item.job_ref %>" class="btn btn-info btn-xs">View</a>
-                                        </td>
-                                    </tr>
-                                    <% }); %>
-                                    
+                                    <% items.forEach(function(item){ %>
+                                        <tr>
+                                            
+                                                <td><%= item.job_ref %></td>
+                                                <td><%= moment(item.reci_date).format('DD-MM-YYYY'); %></td>
+                                                <td><%= item.project %></td>
+                                                <td class="hidden"><%= item.location %></td>
+                                                <td><%= item.customer %></td>
+                                                <td><%= item.product %></td>
+                                                <td><%= item.qty %></td>
+                                                <td><%= item.amount %></td>
+                                                <td><%= item.sales_per %></td>
+                                                <td><%= item.status %></td>                                                <td >
+                                                    <a href="/editenquiry/<%= item.job_ref %>" class="btn btn-warning btn-xs">Edit</a>
+                                                    <a href="/viewenquiry/<%= item.job_ref %>" class="btn btn-info btn-xs">View</a>
+                                                </td>
+                                            </tr>
+                                            <% }); %>
                             </tbody>
                             
                         </table>

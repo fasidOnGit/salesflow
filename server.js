@@ -245,6 +245,20 @@ app.post('/editenquiry/:id', function (req, res) {
   });
 });
 
+app.get('/viewenquiry/:id', function (req, res) {
+  con.query("SELECT * FROM enquiries WHERE job_ref = '" + req.params.id + "'", function (err, result) {
+    result[0].reci_date = dateformat(result[0].reci_date, "dd-mm-yyyy");
+    result[0].sent_date = dateformat(result[0].sent_date, "dd-mm-yyyy");
+    res.render('pages/viewenquiry', {
+      siteTitle: siteTitle,
+      moment: moment,
+      pageTitle: "Enquiry No. : " + result[0].job_ref,
+      item: result
+    });
+  });
+});
+
+
 //   const testFolder = '/PLESKVHOST/vhosts/luftek.in/sales.luftek.in';
 // const fs = require('fs');
 

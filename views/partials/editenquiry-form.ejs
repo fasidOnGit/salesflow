@@ -1,7 +1,7 @@
 <div id="page-wrapper">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">Welcome! Engineer</h1>
+                    <h1></h1>
             </div>
             <!-- /.col-lg-12 -->
         </div>
@@ -17,8 +17,7 @@
                     <div class="panel-heading">
     
     
-                        <h4>
-                            New Enquiry Entry</h4>
+                        <h4>Enquiry No. : <%= item[0].job_ref %></h4>
     
     
     
@@ -26,7 +25,6 @@
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body">
-                            <div class="row"><label name="job_ref"><%= item[0].job_ref %></label></div>
                         <form action="http://localhost:4000/editenquiry/<%= item[0].job_ref %>" method="post">
                             
                             <div class="panel-info">
@@ -182,15 +180,12 @@
                 <div class="row">
                     <div class="col-xs-1 col-sm-1 form-group">
                         <label></label>
-                        <input type="submit" name="submit" Value="Update" class="btn btn-outline btn-success btn-lg btn-block" />
+                        <input type="submit" name="submit" value="Update" class="btn btn-outline btn-success btn-block" />
                     </div>
+                    
                     <div class="col-xs-1 col-sm-1 form-group">
                         <label></label>
-                        <input type="reset" name="reset" class="btn btn-outline btn-primary btn-lg btn-block" />
-                    </div>
-                    <div class="col-xs-1 col-sm-1 form-group">
-                        <label></label>
-                        <input name="cancel" value="Close" class="btn btn-outline btn-danger btn-lg btn-block" />
+                        <input name="cancel" value="Close" class="btn btn-outline btn-danger btn-block" />
                     </div>
                 </div>
     
