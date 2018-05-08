@@ -238,14 +238,10 @@ app.post('/editenquiry/:id', function (req, res) {
   query += "`status`='" + req.body.status + "',";
   query += "`offer_file`='" + req.body.offer_file + "',";
   query += "`tds_file`='" + req.body.tds_file + "',";
-  query += " WHERE `enquiries`.`job_ref`="+req.body.job_ref + "";
+  query += " WHERE `enquiries`.`job_ref`="+ req.body.job_ref + "";
 
   con.query(query, function (err, result) {
-    if (result.affectedRows) 
-    {
-      res.redirect(baseURL);
-    }
-
+    if(result.affectedRows){res.redirect(baseURL);}
   });
 });
 

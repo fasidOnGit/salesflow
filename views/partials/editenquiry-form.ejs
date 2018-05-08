@@ -26,15 +26,15 @@
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body">
-    
+                            <div class="row"><label name="job_ref"><%= item[0].job_ref %></label></div>
                         <form action="http://localhost:4000/editenquiry/<%= item[0].job_ref %>" method="post">
-                            <input type="hidden" name="job_ref" value="">
+                            
                             <div class="panel-info">
                                 <div class="panel-heading">
                                     Project Details
                                 </div>
                                 <div class="panel-body">
-                                    <div class="row"><label name="job_ref"><%= item[0].job_ref %></label></div>
+                                    
                                     <div class="row">
                                         <div class="col-xs-4 col-sm-4 form-group">
                                             <label for="project">Project Name</label>
