@@ -5,6 +5,8 @@ var path = require('path');
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
 var async = require("async");
+var moment 				=	require('moment');
+
 const router = express.Router();
 
 
@@ -136,6 +138,7 @@ app.get('/vendor/morrisjs/morris.css', (req, res) => {
 app.use('/js', express.static(__dirname + '/node_modules/bootstrap/dist/js'));
 app.use('/js', express.static(__dirname + '/node_modules/tether/dist/js'));
 app.use('/js', express.static(__dirname + '/node_modules/jquery/dist'));
+app.use('/',express.static(__dirname + '/node_modules/moment'));
 
 //css directory declaration
 app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css'));
@@ -155,6 +158,7 @@ app.get('/', function (req, res) {
   con.query("SELECT * FROM enquiries ORDER BY job_ref DESC", function (err, result) {
     res.render('pages/index', {
       siteTitle: siteTitle,
+      moment: moment,
       pageTitle: "Enquiry List",
       items: result
     });
@@ -169,14 +173,13 @@ app.get('/addenquiry', function (req, res) {
       pageTitle: "New Enquiry",
       items: ''
     });
-    con.query("SELECT date_format(reci_date, '%d-%m-%y') FROM `salesflow`.`enquiries`", function (err, result) { });
-    con.query("SELECT date_format(sent_date, '%d-%m-%y') FROM `salesflow`.`enquiries`", function (err, result) { });
+    
   });
 });
-con.query("SELECT date_format(reci_date, '%d-%m-%y') FROM `salesflow`.`enquiries`", function (err, result) { });
-con.query("SELECT date_format(sent_date, '%d-%m-%y') FROM `salesflow`.`enquiries`", function (err, result) { });
+
+
 app.post('/addenquiry', function (req, res) {
-  var query = "INSERT INTO `enquiries`(project, location, project_type, consultant, contractor, client, customer_type, customer, contact_per, contact_num, product, qty, amount,reci_date,sent_date,  sales_per, app_engg) VALUES (";
+  var query = "INSERT INTO `enquiries`(project, location, project_type, consultant, contractor, client, customer_type, customer, contact_per, contact_num, product, qty, amount, reci_date,  sales_per, app_engg) VALUES (";
   query += " '" + req.body.project + "',";
   query += " '" + req.body.location + "',";
   query += " '" + req.body.project_type + "',";
@@ -191,7 +194,6 @@ app.post('/addenquiry', function (req, res) {
   query += " '" + req.body.qty + "',";
   query += " '" + req.body.amount + "',";
   query += " '" + dateformat(req.body.reci_date, "yyyy-mm-dd") + "',";
-  query += " '" + dateformat(req.body.sent_date, "yyyy-mm-dd") + "',";
   query += " '" + req.body.sales_per + "',";
   query += " '" + req.body.app_engg + "')";
   con.query(query, function (err, result) {
@@ -206,6 +208,7 @@ app.get('/editenquiry/:id', function (req, res) {
     result[0].sent_date = dateformat(result[0].sent_date, "yyyy-mm-dd");
     res.render('pages/editenquiry', {
       siteTitle: siteTitle,
+      moment: moment,
       pageTitle: "Editing Enquiry : " + result[0].project,
       item: result
     });
@@ -235,15 +238,12 @@ app.post('/editenquiry/:id', function (req, res) {
   query += "`status`='" + req.body.status + "',";
   query += "`offer_file`='" + req.body.offer_file + "',";
   query += "`tds_file`='" + req.body.tds_file + "',";
-  query += "WHERE `enquiries`.`job_ref`="+req.body.job_ref + "";
+  query += " WHERE `enquiries`.`job_ref`="+req.body.job_ref + "";
 
   con.query(query, function (err, result) {
     if (result.affectedRows) 
     {
       res.redirect(baseURL);
-    }
-    else{
-      console.log("Something went wrong...")
     }
 
   });
