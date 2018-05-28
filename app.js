@@ -5,19 +5,78 @@ var path = require('path');
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
 var async = require("async");
-var moment 				=	require('moment');
+var moment = require('moment');
+var logger = require('morgan');
+var expresValidator = require('express-validator');
+var cookieParser = require('cookie-parser');
+
+
+
+
+// Authentication Packages
+var session = require('express-session');
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+var MySQLStore = require('express-mysql-session')(session);
+var bcrypt = require('bcrypt');
+
+var index = require('./routes/index');
+var users = require('./routes/users');
 
 const router = express.Router();
 
+require('dotenv').config();
+
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(expresValidator());
 
 var dateformat = require('dateformat');
 var now = new Date();
 
-app.set('view engine', 'ejs');
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+
+var options = {
+  host: "localhost",
+  user: "salesflow-admin",
+  password: "LSFAdmin-101",
+  database: "salesflow"
+};
+
+var sessionStore = new MySQLStore(options);
+
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  store: sessionStore,
+  saveUninitialized: false,
+  // cookie: { secure: true }
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use(function(req, res, next){
+res.locals.isAuthenticated = req.isAuthenticated();
+next();
+});
+
+passport.use(new LocalStrategy(
+  function (username, password, done) {
+    
+    con.query('SELECT iduser, name, password FROM users WHERE username = ?', [username], function (err, results, fields) {
+      if (err) { done(err) };
+      if (results.length === 0) {
+        done(null, false);
+      }
+      return done(null, {user_id : results[0].iduser});
+    });
+  }
+));
 
 app.use(express.static('vendor'));
 app.use(express.static('/bootstrap/css'));
@@ -138,7 +197,7 @@ app.get('/vendor/morrisjs/morris.css', (req, res) => {
 app.use('/js', express.static(__dirname + '/node_modules/bootstrap/dist/js'));
 app.use('/js', express.static(__dirname + '/node_modules/tether/dist/js'));
 app.use('/js', express.static(__dirname + '/node_modules/jquery/dist'));
-app.use('/',express.static(__dirname + '/node_modules/moment'));
+app.use('/', express.static(__dirname + '/node_modules/moment'));
 
 //css directory declaration
 app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css'));
@@ -152,11 +211,62 @@ const con = mysql.createConnection({
 });
 
 const siteTitle = "SalesFlow | Luftek";
-const baseURL = "http://localhost:4000"
+const baseURL = "http://localhost:4000";
 
 app.get('/', function (req, res) {
+  res.render('pages/login', {
+    siteTitle: siteTitle,
+    moment: moment,
+    pageTitle: "Login",
+    items: ''
+  });
+});
+
+app.post('/login', passport.authenticate(
+  'local', {
+    successRedirect: '/dashboard',
+    failureRedirect: '/'
+  }
+));
+
+app.get('/logout', function (req, res) {
+  req.logout();
+  req.session.destroy();
+  res.render('pages/login',{
+    siteTitle: siteTitle,
+    moment: moment,
+    pageTitle: "Login"
+  });
+});
+
+passport.serializeUser(function (user_id, done) {
+  done(null, user_id);
+});
+
+passport.deserializeUser(function (user_id, done) {
+  done(null, user_id);
+});
+
+function authenticationMiddleware() {
+  return (req, res, next) => {
+    console.log(`req.session.passport.user:${JSON.stringify(req.session.passport)}`);
+    if (req.isAuthenticated()) return next();
+  }
+}
+
+app.get('/dashboard', authenticationMiddleware(), function (req, res) {
+  
+  res.render('pages/dashboard', {
+    siteTitle: siteTitle,
+    moment: moment,
+    pageTitle: "Dashboard",
+    items: ''
+  });
+});
+
+app.get('/enquiry', authenticationMiddleware(),function (req, res) {
   con.query("SELECT * FROM enquiries ORDER BY job_ref DESC", function (err, result) {
-    res.render('pages/index', {
+    res.render('pages/enquiry', {
       siteTitle: siteTitle,
       moment: moment,
       pageTitle: "Enquiry List",
@@ -173,7 +283,7 @@ app.get('/addenquiry', function (req, res) {
       pageTitle: "New Enquiry",
       items: ''
     });
-    
+
   });
 });
 
@@ -216,11 +326,12 @@ app.get('/editenquiry/:id', function (req, res) {
 });
 
 
+
 app.post('/editenquiry/:id', function (req, res) {
-  var query = "UPDATE `enquiries` SET";
-  query += "`project`='" +req.body.project+ "',";
-  query += "`location`='" +req.body.location+ "',";
-  query += "`project_type`='" +req.body.project_type+ "',";
+  var query = "UPDATE `enquiries` SET ";
+  query += "`project`='" + req.body.project + "',";
+  query += "`location`='" + req.body.location + "',";
+  query += "`project_type`='" + req.body.project_type + "',";
   query += "`consultant`='" + req.body.consultant + "',";
   query += "`contractor`='" + req.body.contractor + "',";
   query += "`client`='" + req.body.client + "',";
@@ -238,10 +349,11 @@ app.post('/editenquiry/:id', function (req, res) {
   query += "`status`='" + req.body.status + "',";
   query += "`offer_file`='" + req.body.offer_file + "',";
   query += "`tds_file`='" + req.body.tds_file + "',";
-  query += " WHERE `enquiries`.`job_ref`="+ req.body.job_ref + "";
+  query += " WHERE `enquiries`.`job_ref`=" + req.body.job_ref + "";
 
   con.query(query, function (err, result) {
-    if(result.affectedRows){res.redirect(baseURL);}
+    if (result.affectedRows) { res.redirect(baseURL); }
+    else { console.log(err); }
   });
 });
 
@@ -324,6 +436,4 @@ app.get('/viewenquiry/:id', function (req, res) {
 //   // Add these values to your MySQL database here
 // });
 
-var server = app.listen(4000, function () {
-  console.log("Server started on 4000....");
-});
+
