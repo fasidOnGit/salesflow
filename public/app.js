@@ -1,13 +1,5 @@
-var http = require('http');
-var url = require('url');
-http.createServer(function (req, res) {
-
-}).listen(process.env.PORT);
-
-console.log('Application has started at location ' + process.env.PORT);
-
-
 var express = require('express');
+var http = require('http');
 var app = express();
 var path = require('path');
 var bodyParser = require('body-parser');
@@ -85,39 +77,6 @@ passport.use(new LocalStrategy(
     });
   }
 ));
-
-app.post('/login', passport.authenticate(
-  'local', {
-    successRedirect: '/dashboard',
-    failureRedirect: '/'
-  }
-));
-
-app.get('/logout', function (req, res) {
-  req.logout();
-  req.session.destroy();
-  res.render('pages/login',{
-    siteTitle: siteTitle,
-    moment: moment,
-    pageTitle: "Login"
-  });
-});
-
-passport.serializeUser(function (user_id, done) {
-  done(null, user_id);
-});
-
-passport.deserializeUser(function (user_id, done) {
-  done(null, user_id);
-});
-
-function authenticationMiddleware() {
-  return (req, res, next) => {
-    console.log(`req.session.passport.user:${JSON.stringify(req.session.passport)}`);
-    if (req.isAuthenticated()) return next();
-  }
-}
-
 
 app.use(express.static('vendor'));
 app.use(express.static('/bootstrap/css'));
@@ -252,7 +211,7 @@ const con = mysql.createConnection({
 });
 
 const siteTitle = "SalesFlow | Luftek";
-const baseURL = "http://localhost:4000/enquiry";
+const baseURL = "http://localhost:4000";
 
 app.get('/', function (req, res) {
   res.render('pages/login', {
@@ -263,23 +222,46 @@ app.get('/', function (req, res) {
   });
 });
 
+app.post('/login', passport.authenticate(
+  'local', {
+    successRedirect: '/dashboard',
+    failureRedirect: '/'
+  }
+));
+
+app.get('/logout', function (req, res) {
+  req.logout();
+  req.session.destroy();
+  res.render('pages/login',{
+    siteTitle: siteTitle,
+    moment: moment,
+    pageTitle: "Login"
+  });
+});
+
+passport.serializeUser(function (user_id, done) {
+  done(null, user_id);
+});
+
+passport.deserializeUser(function (user_id, done) {
+  done(null, user_id);
+});
+
+function authenticationMiddleware() {
+  return (req, res, next) => {
+    console.log(`req.session.passport.user:${JSON.stringify(req.session.passport)}`);
+    if (req.isAuthenticated()) return next();
+  }
+}
 
 app.get('/dashboard', authenticationMiddleware(), function (req, res) {
-  if(user_id=="undefined"){
-    res.render('pages/login', {
-      siteTitle: siteTitle,
-      moment: moment,
-      pageTitle: "Login",
-      items: ''
-    });
-  }
+  
   res.render('pages/dashboard', {
     siteTitle: siteTitle,
     moment: moment,
     pageTitle: "Dashboard",
     items: ''
   });
-  
 });
 
 app.get('/enquiry', authenticationMiddleware(),function (req, res) {
@@ -346,11 +328,32 @@ app.get('/editenquiry/:id', function (req, res) {
 
 
 app.post('/editenquiry/:id', function (req, res) {
- 
+  var query = "UPDATE `enquiries` SET ";
+  query += "`project`='" + req.body.project + "',";
+  query += "`location`='" + req.body.location + "',";
+  query += "`project_type`='" + req.body.project_type + "',";
+  query += "`consultant`='" + req.body.consultant + "',";
+  query += "`contractor`='" + req.body.contractor + "',";
+  query += "`client`='" + req.body.client + "',";
+  query += "`customer_type`='" + req.body.customer_type + "',";
+  query += "`customer`='" + req.body.customer + "',";
+  query += "`contact_per`='" + req.body.contact_per + "',";
+  query += "`contact_num`='" + req.body.contact_num + "',";
+  query += "`product`='" + req.body.product + "',";
+  query += "`qty`='" + req.body.qty + "',";
+  query += "`amount`='" + req.body.amount + "',";
+  query += "`reci_date`='" + req.body.reci_date + "',";
+  query += "`sent_date`='" + req.body.sent_date + "',";
+  query += "`sales_per`='" + req.body.sales_per + "',";
+  query += "`app_engg`='" + req.body.app_engg + "',";
+  query += "`status`='" + req.body.status + "',";
+  query += "`offer_file`='" + req.body.offer_file + "',";
+  query += "`tds_file`='" + req.body.tds_file + "',";
+  query += " WHERE `enquiries`.`job_ref`=" + req.body.job_ref + "";
 
-  con.query("UPDATE enquiries SET project = ?, location = ? , project_type = ? , consultant = ? , contractor = ? , client = ? , customer_type = ? , customer = ? , contact_per = ? , contact_num = ? , product = ? , qty = ? , amount = ? , reci_date = ? , sent_date = ? , sales_per = ? , app_engg = ? , status = ? , offer_file = ? , tds_file = ? WHERE job_ref = ? ", [ req.body.project, req.body.location , req.body.project_type, req.body.consultant, req.body.contractor , req.body.client, req.body.customer_type, req.body.customer , req.body.contact_per, req.body.contact_num, req.body.product , req.body.qty, req.body.amount , req.body.reci_date, req.body.sent_date , req.body.sales_per, req.body.app_engg, req.body.status, req.body.offer_file, req.body.tds_file, req.params.id ] , function (err, result) {
-    if (result) { res.redirect(baseURL); }
-  else{console.log(err); }
+  con.query(query, function (err, result) {
+    if (result.affectedRows) { res.redirect(baseURL); }
+    else { console.log(err); }
   });
 });
 
@@ -368,8 +371,69 @@ app.get('/viewenquiry/:id', function (req, res) {
 });
 
 
+//   const testFolder = '/PLESKVHOST/vhosts/luftek.in/sales.luftek.in';
+// const fs = require('fs');
+
+// fs.readdir(testFolder, (err, files) => {
+//   files.forEach(file => {
+//     app.get(file, (req, res)=>{
+//       res.sendFile(path.join(__dirname + file));
+//     });
+//   });
+// });
+// });
 
 
 
+
+// const forceSSL = function() {
+//   return function (req, res, next) {
+//     if (req.headers['x-forwarded-proto'] !== 'https') {
+//       return res.redirect(
+//        ['https://', req.get('Host'), req.url].join('')
+//       );
+//     }
+//     next();
+//   }
+// }
+
+
+// app.use((req , res , next) => {
+//   res.setHeader(`Access-Control-Allow-Origin` , `*`);
+//   res.setHeader(`Access-Control-Allow-Credentials` , `true`);
+//   res.setHeader(`Access-Control-Allow-Methods` , `GET, HEAD , OPTIONS, POST , DELETE`);
+//   res.setHeader(`Access-Control-Allow-Headers`, `Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers`);
+
+//  next();  
+// });
+
+
+// app.use(express.static(__dirname + '/'));
+
+
+// app.get('/index', function(req, res) {
+// 	console.log(__dirname)
+//   res.sendFile(path.join(__dirname + '/index.html'));
+// });
+
+
+// var Connection = mysql.createConnection({
+//     host:'localhost',
+//     user:'salesflow-admin',
+//     password:'LSFAdmin-101',
+//     database:'salesflow'
+// });
+// Connection.connect()   
+
+
+// app.get('/', function(req, res) {
+//   res.sendFile(path.join(__dirname, 'pages/enquiry.html'));
+// });
+
+// app.post('/enquiry_data', function(req, res) {
+//   console.log(req.body.reci_date);
+//   console.log(req.body.project);
+//   // Add these values to your MySQL database here
+// });
 
 
